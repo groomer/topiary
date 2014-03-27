@@ -38,12 +38,13 @@ createDocumentViewModel = ->
   cachedContentArray = ko.observableArray()
   contentArray = -> _.map shownRevision().contents(), (c) -> c.html()
 
-  throttledNeedsSave = ko.computed ->
+  needsSave = ko.computed ->
     return false unless cachedContentArray().length
     return false if _.isEqual contentArray(), cachedContentArray()
     saveStatus "modified since last save."
     true
-  .extend throttle: SAVE_INTERVAL
+
+  throttledNeedsSave = ko.computed(needsSave).extend throttle: SAVE_INTERVAL
 
   throttledNeedsSave.subscribe (ns) ->
     return unless ns
@@ -66,7 +67,7 @@ createDocumentViewModel = ->
     cachedContentArray contentArray()
 
   shownRevision.subscribe loadRev
-  { saveStatus, revisions, shownRevision, cachedContentArray, contentArray }
+  { saveStatus, revisions, shownRevision, cachedContentArray, contentArray, loadRev }
 
 
 doc = createDocumentViewModel()
