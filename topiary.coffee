@@ -1,15 +1,14 @@
 SAVE_INTERVAL = 1000
 
-LOREM_IPSUM = [
-    [
-        { prompt: "What is your favorite pet?", html: "<h1>why mooses are the best (rough draft)</h1><p>I love mooses so much</p>" },
+LOREM_IPSUM =
+    'Rough Draft': [
+        { prompt: "What is your favorite pet?", html: "<h1>why mooses are the best (rough draft)</h1><p>I love mooses so much</p>" }
         { prompt: "What is your favorite flower?", html: "<h1>a rose by any other name</h1><p>would smell funky</p>" }
-    ],
-    [
-        { prompt: "What is your favorite pet?", html: "<h1>why meese are the best (final draft)</h1><p>I love meese so much</p>" },
+    ]
+    'Final Draft': [
+        { prompt: "What is your favorite pet?", html: "<h1>why meese are the best (final draft)</h1><p>I love meese so much</p>" }
         { prompt: "What is your favorite flower?", html: "<h1>a rose by any other name</h1><p>would not smell the same</p>" }
     ]
-]
 
 ko.bindingHandlers.htmlValue = do ->
 
@@ -29,7 +28,7 @@ ko.bindingHandlers.htmlValue = do ->
 createContent = ( { prompt, requiredLength, metric: progressMetric, html } ) ->
     { prompt, requiredLength, progressMetric, html: ko.observable html }
 
-createRevision = (name, index) -> { name, index, contents: ko.observableArray() }
+createRevision = (name) -> { name, contents: ko.observableArray() }
 
 createDocumentViewModel = ->
     saveStatus = ko.observable("auto-saved.")
@@ -61,8 +60,8 @@ createDocumentViewModel = ->
         shownRevision().contents []
         cachedContentArray []
         # Pretend this goes to the server to fetch the revision from the database.
-        _.each LOREM_IPSUM[shownRevision().index], (d, i) =>
-            content = createContent prompt: d.prompt, html: d.html, index: i
+        _.each LOREM_IPSUM[shownRevision().name], ({ prompt, html }) =>
+            content = createContent { prompt, html }
             shownRevision().contents.push content
         cachedContentArray contentArray()
 
@@ -71,6 +70,6 @@ createDocumentViewModel = ->
 
 
 doc = createDocumentViewModel()
-doc.revisions [createRevision("Rough Draft", 0), createRevision("Final Draft", 1)]
-doc.shownRevision doc.revisions()[0]
+doc.revisions _.map LOREM_IPSUM, (sections, key) -> createRevision key
+doc.shownRevision _.first doc.revisions()
 ko.applyBindings doc

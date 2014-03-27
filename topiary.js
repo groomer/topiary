@@ -4,8 +4,8 @@
 
   SAVE_INTERVAL = 1000;
 
-  LOREM_IPSUM = [
-    [
+  LOREM_IPSUM = {
+    'Rough Draft': [
       {
         prompt: "What is your favorite pet?",
         html: "<h1>why mooses are the best (rough draft)</h1><p>I love mooses so much</p>"
@@ -13,7 +13,8 @@
         prompt: "What is your favorite flower?",
         html: "<h1>a rose by any other name</h1><p>would smell funky</p>"
       }
-    ], [
+    ],
+    'Final Draft': [
       {
         prompt: "What is your favorite pet?",
         html: "<h1>why meese are the best (final draft)</h1><p>I love meese so much</p>"
@@ -22,7 +23,7 @@
         html: "<h1>a rose by any other name</h1><p>would not smell the same</p>"
       }
     ]
-  ];
+  };
 
   ko.bindingHandlers.htmlValue = (function() {
     var assimilator;
@@ -61,10 +62,9 @@
     };
   };
 
-  createRevision = function(name, index) {
+  createRevision = function(name) {
     return {
       name: name,
-      index: index,
       contents: ko.observableArray()
     };
   };
@@ -108,12 +108,12 @@
     loadRev = function() {
       shownRevision().contents([]);
       cachedContentArray([]);
-      _.each(LOREM_IPSUM[shownRevision().index], function(d, i) {
-        var content;
+      _.each(LOREM_IPSUM[shownRevision().name], function(_arg) {
+        var content, html, prompt;
+        prompt = _arg.prompt, html = _arg.html;
         content = createContent({
-          prompt: d.prompt,
-          html: d.html,
-          index: i
+          prompt: prompt,
+          html: html
         });
         return shownRevision().contents.push(content);
       });
@@ -132,9 +132,11 @@
 
   doc = createDocumentViewModel();
 
-  doc.revisions([createRevision("Rough Draft", 0), createRevision("Final Draft", 1)]);
+  doc.revisions(_.map(LOREM_IPSUM, function(sections, key) {
+    return createRevision(key);
+  }));
 
-  doc.shownRevision(doc.revisions()[0]);
+  doc.shownRevision(_.first(doc.revisions()));
 
   ko.applyBindings(doc);
 
