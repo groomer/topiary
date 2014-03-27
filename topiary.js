@@ -12,8 +12,6 @@ var LOREM_IPSUM = [
 
 function arrayEquals(a,b) { return !(a < b || b < a); }
 
-if (!String.prototype.trim) { String.prototype.trim = function () { return this.replace(/^\s+|\s+$/g,""); }; }
-
 ko.bindingHandlers.htmlValue = {
   init: function(element, valueAccessor, allBindingsAccessor) {
     ko.utils.registerEventHandler(element, 'blur keyup', function() {
