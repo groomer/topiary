@@ -1,0 +1,28 @@
+<html>
+<head>
+  <title>Scripted | Topiary</title>
+  <link href="./style.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="./jquery.js" type="text/javascript"></script>
+  <script src="./knockout.js" type="text/javascript"></script>
+  <script src="./topiary.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var doc;
+    $(document).ready(function(){
+      doc = new DocumentViewModel();
+      doc.revisions([new Revision("Rough Draft", 0), new Revision("Final Draft", 1)]);
+      doc.shownRevision(doc.revisions()[0]);
+      ko.applyBindings(doc);
+    });
+  </script>
+</head>
+<body>
+  <select data-bind="options:revisions, value:shownRevision, optionsText: 'name'"></select>
+  <p data-bind="text:saveStatus"></p>
+  <div id="content" data-bind="foreach:shownRevision().contents()">
+    <p>Prompt <strong data-bind="text:prompt"></strong></p>
+    <div class="content" contenteditable spellcheck="true" data-bind="htmlValue:html"></div>
+  </div>
+</body>
+</html>
+
+
