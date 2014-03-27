@@ -14,12 +14,12 @@ ko.bindingHandlers.htmlValue = {
   init: function(element, valueAccessor, allBindingsAccessor) {
     ko.utils.registerEventHandler(element, 'blur keyup', function() {
       var modelValue = valueAccessor();
-      modelValue($(element).html());
+      modelValue(element.innerHTML);
     });
   },
   update: function(element, valueAccessor) {
     var value = ko.utils.unwrapObservable(valueAccessor()) || "";
-    if ($(element).html() !== value) $(element).html(value);
+    if (element.innerHTML !== value) element.innerHTML = value;
   }
 };
 
@@ -43,7 +43,7 @@ function DocumentViewModel(){
   self.shownRevision = ko.observable();
   self.cachedContentArray = ko.observableArray();
   self.contentArray = function(){
-    return $.map(self.shownRevision().contents(), function (c) { return c.html(); });
+    return _.map(self.shownRevision().contents(), function (c) { return c.html(); });
   };
   self.needsSave = ko.computed(function() {
     if (self.cachedContentArray().length == 0) return false;
@@ -68,7 +68,7 @@ function DocumentViewModel(){
     self.shownRevision().contents([]);
     self.cachedContentArray([]);
     // Pretend this goes to the server to fetch the revision from the database.
-    $.each(LOREM_IPSUM[self.shownRevision().index], function(i, d){
+    _.each(LOREM_IPSUM[self.shownRevision().index], function(d, i){
       var content = new Content({ prompt: d.prompt, html: d.html, index: i });
       self.shownRevision().contents.push(content);
     });
