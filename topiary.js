@@ -10,18 +10,25 @@ var LOREM_IPSUM = [
   ]
 ];
 
-ko.bindingHandlers.htmlValue = {
-  init: function(element, valueAccessor, allBindingsAccessor) {
-    ko.utils.registerEventHandler(element, 'blur keyup', function() {
+ko.bindingHandlers.htmlValue = (function() {
+  function assimilator(element, valueAccessor) {
+    return function () {
       var modelValue = valueAccessor();
       modelValue(element.innerHTML);
-    });
-  },
-  update: function(element, valueAccessor) {
-    var value = ko.utils.unwrapObservable(valueAccessor()) || "";
-    if (element.innerHTML !== value) element.innerHTML = value;
+    }
   }
-};
+  return {
+    init: function(element, valueAccessor, allBindingsAccessor) {
+      var assimilate = assimilator(element, valueAccessor);
+      ko.utils.registerEventHandler(element, 'blur', assimilate);
+      ko.utils.registerEventHandler(element, 'keyup', assimilate);
+    },
+    update: function(element, valueAccessor) {
+      var value = ko.utils.unwrapObservable(valueAccessor()) || "";
+      if (element.innerHTML !== value) element.innerHTML = value;
+    }
+  };
+})();
 
 function Content(d){
   var self = this;
