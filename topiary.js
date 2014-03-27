@@ -10,8 +10,6 @@ var LOREM_IPSUM = [
   ]
 ];
 
-function arrayEquals(a,b) { return !(a < b || b < a); }
-
 ko.bindingHandlers.htmlValue = {
   init: function(element, valueAccessor, allBindingsAccessor) {
     ko.utils.registerEventHandler(element, 'blur keyup', function() {
@@ -49,7 +47,7 @@ function DocumentViewModel(){
   };
   self.needsSave = ko.computed(function() {
     if (self.cachedContentArray().length == 0) return false;
-    if (arrayEquals(self.contentArray(), self.cachedContentArray())) return false;
+    if (_.isEqual(self.contentArray(), self.cachedContentArray())) return false;
     self.saveStatus("modified since last save.");
     return true;
   });
