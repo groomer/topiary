@@ -1,10 +1,10 @@
 var SAVE_INTERVAL = 1000;
 var LOREM_IPSUM = [
-  [ 
+  [
     { prompt: "What is your favorite pet?", html: "<h1>why mooses are the best (rough draft)</h1><p>I love mooses so much</p>" },
     { prompt: "What is your favorite flower?", html: "<h1>a rose by any other name</h1><p>would smell funky</p>" }
   ],
-  [ 
+  [
     { prompt: "What is your favorite pet?", html: "<h1>why meese are the best (final draft)</h1><p>I love meese so much</p>" },
     { prompt: "What is your favorite flower?", html: "<h1>a rose by any other name</h1><p>would not smell the same</p>" }
   ]
@@ -27,7 +27,7 @@ ko.bindingHandlers.htmlValue = {
   }
 };
 
-function Content(d){  
+function Content(d){
   var self = this;
   self.prompt = d.prompt;
   self.progressMetric = d.metric;
@@ -80,3 +80,8 @@ function DocumentViewModel(){
   };
   self.shownRevision.subscribe(self.loadRev);
 }
+
+var doc = new DocumentViewModel();
+doc.revisions([new Revision("Rough Draft", 0), new Revision("Final Draft", 1)]);
+doc.shownRevision(doc.revisions()[0]);
+ko.applyBindings(doc);
