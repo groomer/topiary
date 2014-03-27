@@ -9,7 +9,6 @@ var LOREM_IPSUM = [
     { prompt: "What is your favorite flower?", html: "<h1>a rose by any other name</h1><p>would not smell the same</p>" }
   ]
 ];
-
 ko.bindingHandlers.htmlValue = (function() {
   function assimilator(element, valueAccessor) {
     return function () {
@@ -29,19 +28,16 @@ ko.bindingHandlers.htmlValue = (function() {
     }
   };
 })();
-
-function Content(d){
-  var self = this;
-  self.prompt = d.prompt;
-  self.progressMetric = d.metric;
-  self.requiredLength = d.requiredLength;
-  self.html = ko.observable(d.html);
+function createContent(d){
+  return {
+    prompt: d.prompt,
+    progressMetric: d.metric,
+    requiredLength: d.requiredLength,
+    html: ko.observable(d.html)
+  };
 }
-function Revision(name, index){
-  var self = this;
-  self.name = name;
-  self.index = index;
-  self.contents = ko.observableArray();
+function createRevision(name, index){
+  return { name: name, index: index, contents: ko.observableArray() };
 }
 function DocumentViewModel(){
   var self = this;
@@ -75,15 +71,14 @@ function DocumentViewModel(){
     self.cachedContentArray([]);
     // Pretend this goes to the server to fetch the revision from the database.
     _.each(LOREM_IPSUM[self.shownRevision().index], function(d, i){
-      var content = new Content({ prompt: d.prompt, html: d.html, index: i });
+      var content = createContent({ prompt: d.prompt, html: d.html, index: i });
       self.shownRevision().contents.push(content);
     });
     self.cachedContentArray(self.contentArray());
   };
   self.shownRevision.subscribe(self.loadRev);
 }
-
 var doc = new DocumentViewModel();
-doc.revisions([new Revision("Rough Draft", 0), new Revision("Final Draft", 1)]);
+doc.revisions([createRevision("Rough Draft", 0), createRevision("Final Draft", 1)]);
 doc.shownRevision(doc.revisions()[0]);
 ko.applyBindings(doc);
