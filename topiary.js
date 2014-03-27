@@ -52,13 +52,12 @@ function DocumentViewModel(){
   self.contentArray = function(){
     return _.map(self.shownRevision().contents(), function (c) { return c.html(); });
   };
-  self.needsSave = ko.computed(function() {
+  self.throttledNeedsSave = ko.computed(function() {
     if (self.cachedContentArray().length == 0) return false;
     if (_.isEqual(self.contentArray(), self.cachedContentArray())) return false;
     self.saveStatus("modified since last save.");
     return true;
-  });
-  self.throttledNeedsSave = ko.computed(self.needsSave).extend({ throttle: SAVE_INTERVAL });
+  }).extend({ throttle: SAVE_INTERVAL });
   self.throttledNeedsSave.subscribe(function(ns){
     if (ns) {
       self.saveStatus("saving...");
